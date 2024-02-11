@@ -12,9 +12,16 @@ public class LeaderboardService : ILeaderboardService
     {
         _leaderboardRepository = leaderboardRepository;
     }
-    
-    public async Task AddLeaderboardRecordAsync(LeaderboardRecord record)
+
+    public async Task AddOrUpdateUserRecordAsync(LeaderboardRecord record)
     {
+        var previousRecord = await _leaderboardRepository.GetByUserIdAsync(record.user_id);
+
+        if (previousRecord is not null)
+        {
+            await _leaderboardRepository.DeleteAsync(previousRecord);
+        }
+
         await _leaderboardRepository.AddAsync(record);
     }
 
@@ -27,9 +34,19 @@ public class LeaderboardService : ILeaderboardService
     {
         return await _leaderboardRepository.GetByIdAsync(id);
     }
+    
+    public async Task<LeaderboardRecord?> GetLeaderboardRecordByUserIdAsync(Guid id)
+    {
+        return await _leaderboardRepository.GetByIdAsync(id);
+    }
 
     public async Task<int> GetLeaderboardRecordsCountAsync()
     {
         return await _leaderboardRepository.GetCountAsync();
+    }
+
+    public async Task<int> GetLeaderboardRecordTopPositionAsync(Guid id)
+    {
+        return await _leaderboardRepository.GetTopPositionById(id);
     }
 }

@@ -23,9 +23,9 @@ public class LeaderboardController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetLeaderboardRecordById(Guid id)
+    public async Task<IActionResult> GetLeaderboardRecordByUserId(Guid id)
     {
-        var leaderboardRecord = await _leaderboardService.GetLeaderboardRecordByIdAsync(id);
+        var leaderboardRecord = await _leaderboardService.GetLeaderboardRecordByUserIdAsync(id);
 
         if (leaderboardRecord is null)
         {
@@ -36,16 +36,16 @@ public class LeaderboardController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddLeaderboardRecord([FromBody] LeaderboardRecord leaderboardRecord)
+    public async Task<IActionResult> AddOrUpdateLeaderboardRecord([FromBody] LeaderboardRecord leaderboardRecord)
     {
-        await _leaderboardService.AddLeaderboardRecordAsync(leaderboardRecord);
+        await _leaderboardService.AddOrUpdateUserRecordAsync(leaderboardRecord);
         return Ok();
     }
 
     [HttpGet("top")]
-    public async Task<IActionResult> GetTopList(int count)
+    public async Task<IActionResult> GetLeaderboardTopList(int count)
     {
-        var list = await _leaderboardService.GetTopLeaderboardRecordsAsync(count);
+        var list = await _leaderboardService.GetTopLeaderboardRecordsAsync(count);  
 
         if (list is null)
         {
@@ -53,5 +53,20 @@ public class LeaderboardController : ControllerBase
         }
 
         return Ok(list);
+    }
+    
+    [HttpGet("top/position")]
+    public async Task<IActionResult> GetLeaderboardTopPositionById(Guid id)
+    {
+        var record = await _leaderboardService.GetLeaderboardRecordByIdAsync(id);
+
+        if (record is null)
+        {
+            return NotFound();
+        }
+
+        int position = await _leaderboardService.GetLeaderboardRecordTopPositionAsync(id);
+
+        return Ok(position);
     }
 }

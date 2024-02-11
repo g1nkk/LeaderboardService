@@ -7,5 +7,5 @@ public interface IUserService
     Task<User?> GetUserByIdAsync(Guid id);
     Task<int> GetUsersCountAsync();
     Task AddUserAsync(User user);
-    Task<User?> GetUserByNameAsync(string name);
+
 }

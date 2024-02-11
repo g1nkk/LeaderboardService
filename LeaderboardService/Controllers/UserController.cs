@@ -40,7 +40,7 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddUser([FromBody] User user)
     {
-        if (await _userService.GetUserByNameAsync(user.name) is not null)
+        if (await _userService.GetUserByIdAsync(user.id) is not null)
         {
             return Conflict();
         }

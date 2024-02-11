@@ -16,11 +16,6 @@ public class UserService : IUserService
     {
         return await _userRepository.GetByIdAsync(id);
     }
-    
-    public async Task<User?> GetUserByNameAsync(string name)
-    {
-        return await _userRepository.GetByNameAsync(name);
-    }
 
     public async Task<int> GetUsersCountAsync()
     {
