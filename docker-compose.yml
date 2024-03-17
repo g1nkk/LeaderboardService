@@ -1,0 +1,18 @@
+﻿services:
+  leaderboardservice:
+    image: leaderboardservice
+    build:
+      context: .
+      dockerfile: LeaderboardService/Dockerfile
+    ports:
+      - "5000:80"
+    environment:
+      - ConnectionStrings__DefaultConnection=${POSTGRES_CONNECTION}
+      - Redis__Connection=${REDIS_CONNECTION}
+    depends_on:
+      - redis
+  
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"

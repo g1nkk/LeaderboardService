@@ -7,9 +7,16 @@ public class LeaderboardContext : DbContext
 {
     public DbSet<User> users { get; set; }
     public DbSet<LeaderboardRecord> leaderboardrecords { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    
+    public LeaderboardContext(DbContextOptions<LeaderboardContext> options) : base(options)
     {
-        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Username=postgres;Password=Kdb222googl_e;Database=irritated_mind_leaderboard;"); 
+    }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<LeaderboardRecord>()
+            .HasOne(lr => lr.User) 
+            .WithMany()
+            .HasForeignKey(lr => lr.user_id);
     }
 }

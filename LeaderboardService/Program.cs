@@ -1,6 +1,9 @@
+using StackExchange.Redis;
 using LeaderboardService.DataAccess;
+using LeaderboardService.Redis;
 using LeaderboardService.Repositories;
 using LeaderboardService.Services;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
 
@@ -30,7 +33,15 @@ builder.Services.AddScoped<ILeaderboardService, LeaderboardService.Services.Lead
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ILeaderboardRepository, LeaderboardRepository>();
 
-builder.Services.AddDbContext<LeaderboardContext>();
+var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+builder.Services.AddDbContext<LeaderboardContext>(options => options.UseNpgsql(connectionString));
+
+builder.Services.AddSingleton<RedisConnection>();
+builder.Services.AddSingleton<IDatabase>(provider =>
+{
+    var redisConnection = provider.GetRequiredService<RedisConnection>();
+    return redisConnection.GetDatabase();
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -38,14 +49,25 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseSerilogRequestLogging(options =>
+{
+    // Customize the message template
+    options.MessageTemplate = "Handled {RequestPath} {IPAddress}";
+    
+    // Attach additional properties to the request completion event
+    options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+    {
+        diagnosticContext.Set("IPAddress", httpContext.Connection.RemoteIpAddress);
+
+    };
+});
+
 // Configure the HTTP request pipeline.
 if (  app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
