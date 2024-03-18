@@ -1,4 +1,5 @@
-﻿using LeaderboardService.DataBase.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using LeaderboardService.DataBase.Models;
 using LeaderboardService.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,7 +44,7 @@ public class LeaderboardController : ControllerBase
     }
 
     [HttpGet("top")]
-    public async Task<IActionResult> GetLeaderboardTopList(int count)
+    public async Task<IActionResult> GetLeaderboardTopList([FromQuery][Range(0, 100)]int count)
     {
         var list = await _leaderboardService.GetTopLeaderboardRecordsAsync(count);  
 

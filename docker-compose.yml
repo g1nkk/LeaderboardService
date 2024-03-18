@@ -11,8 +11,19 @@
       - Redis__Connection=${REDIS_CONNECTION}
     depends_on:
       - redis
+      - db
   
   redis:
     image: redis
     ports:
       - "6379:6379"
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: leaderboard
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./PostgresDB:/docker-entrypoint-initdb.d

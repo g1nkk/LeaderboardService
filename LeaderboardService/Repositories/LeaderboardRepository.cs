@@ -45,7 +45,7 @@ public class LeaderboardRepository : ILeaderboardRepository
             .Include(lr => lr.User)
             .ToListAsync();
         
-        await UpdateCacheAsync();
+        UpdateCacheAsync();
 
         return list;
     }
@@ -54,12 +54,11 @@ public class LeaderboardRepository : ILeaderboardRepository
     {
         var recordsFromDb = await _dbContext.leaderboardrecords
             .OrderByDescending(lr => lr.playtime)
-            .Take(10)
+            .Take(100)
             .Include(lr => lr.User)
             .ToListAsync();
-
-        await _redisDb.StringSetAsync("leaderboard_top", JsonSerializer.Serialize(recordsFromDb),
-            TimeSpan.FromMinutes(10));
+        
+        await _redisDb.StringSetAsync("leaderboard_top", JsonSerializer.Serialize(recordsFromDb));
     }
 
     public async Task<LeaderboardRecord?> GetByIdAsync(Guid id)
