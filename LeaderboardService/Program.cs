@@ -49,18 +49,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UseSerilogRequestLogging(options =>
-{
-    // Customize the message template
-    options.MessageTemplate = "Handled {RequestPath} {IPAddress}";
-    
-    // Attach additional properties to the request completion event
-    options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
-    {
-        diagnosticContext.Set("IPAddress", httpContext.Connection.RemoteIpAddress);
-
-    };
-});
+app.UseSerilogRequestLogging();
 
 // Configure the HTTP request pipeline.
 if (  app.Environment.IsDevelopment())

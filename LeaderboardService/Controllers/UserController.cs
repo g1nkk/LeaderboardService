@@ -9,11 +9,13 @@ namespace LeaderboardService.Controllers;
 [Route("/users")]
 public class UserController : ControllerBase
 {
+    private readonly ILogger<UserController> _logger;
     private readonly IUserService _userService;
 
-    public UserController(IUserService userService)
+    public UserController(IUserService userService, ILogger<UserController> logger)
     {
-        _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+        _userService = userService;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -46,6 +48,9 @@ public class UserController : ControllerBase
         }
         
         await _userService.AddUserAsync(user);
+
+        _logger.LogInformation($"NEW USER WAS CREATED: {user.name}");
+        
         return Ok();
     }
 }

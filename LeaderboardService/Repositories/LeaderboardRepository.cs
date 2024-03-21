@@ -19,7 +19,7 @@ public class LeaderboardRepository : ILeaderboardRepository
 
     public async Task AddAsync(LeaderboardRecord leaderboardRecord)
     {
-        await _dbContext.AddAsync(leaderboardRecord);
+        await _dbContext.leaderboardrecords.AddAsync(leaderboardRecord);
         await _dbContext.SaveChangesAsync();
     }
 
