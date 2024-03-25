@@ -22,7 +22,15 @@ public class LeaderboardService : ILeaderboardService
             await _leaderboardRepository.DeleteAsync(previousRecord);
         }
 
-        await _leaderboardRepository.AddAsync(record);
+        var recordWithoutUser = new LeaderboardRecord
+        {
+            date = record.date,
+            id = record.id,
+            playtime = record.playtime,
+            user_id = record.user_id
+        };
+        await _leaderboardRepository.AddAsync(recordWithoutUser);
+        await _leaderboardRepository.UpdateCacheAsync();
     }
 
     public async Task<IEnumerable<LeaderboardRecord>?> GetTopLeaderboardRecordsAsync(int count)
@@ -34,10 +42,10 @@ public class LeaderboardService : ILeaderboardService
     {
         return await _leaderboardRepository.GetByIdAsync(id);
     }
-    
+
     public async Task<LeaderboardRecord?> GetLeaderboardRecordByUserIdAsync(Guid id)
     {
-        return await _leaderboardRepository.GetByIdAsync(id);
+        return await _leaderboardRepository.GetByUserIdAsync(id);
     }
 
     public async Task<int> GetLeaderboardRecordsCountAsync()

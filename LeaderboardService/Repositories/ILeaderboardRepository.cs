@@ -9,6 +9,7 @@ public interface ILeaderboardRepository
     Task<IEnumerable<LeaderboardRecord>?> GetTopAsync(int count);
     Task<LeaderboardRecord?> GetByIdAsync(Guid id);
     Task<LeaderboardRecord?> GetByUserIdAsync(Guid id);
+    Task UpdateCacheAsync();
     Task<int> GetCountAsync();
     Task<int> GetTopPositionById(Guid id);
 }
